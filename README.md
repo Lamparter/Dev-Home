@@ -1,51 +1,34 @@
-# **⚠️ Dev Home will be going away in May 2025 and a subset of its features will be moved to new places. Stay tuned for more information in the following months. ⚠️**
+> [!CAUTION]
+> ~~Dev Home will be going away in May 2025 and a subset of its features will be moved to new places. Stay tuned for more information in the following months.~~
+> 
+> Dev Home is **not**, like you might think it is, going into the signature Microsoft Graveyard™ - instead, it is being brought back from the dead in this repository, in an awesome collaboration with the [Windows App Community](https://dsc.gg/uwpc).
+> Stay tuned for more information!
 
-![dev-home-readme-header](https://github.com/microsoft/devhome/blob/main/src/Assets/Preview/StoreDisplay-150.png)
-
-# Welcome to the Dev Home repo!
+![Dev Home banner](https://github.com/user-attachments/assets/0413bc83-8764-4050-ae2e-e92bd821e041)
 
 Dev Home is a new experience from Microsoft aiming to give developers more power on Windows.
 
-This repository contains the source code for:
+Microsoft [officially announced](https://github.com/microsoft/devhome/pull/4028) they would be deprecating Dev Home on the 27th of January 2025.
+Just a couple days later, this repo was made and work continuing Dev Home began immediately.
+Any contribution is welcome, and please provide feedback!
 
-* [Dev Home](https://aka.ms/devhome)
-* Dev Home core widgets
+## Installing Dev Home
 
-Related repositories include:
+> [!NOTE]
+> Dev Home requires Windows 11 version 21H2 (build 22000) or Windows 10 version 22H2 (build 19045) or newer.
+> ~~If you are running Windows 11 23H2 (build 22621.2361) or later, you can install and run Dev Home just by finding it in the Start menu.~~
 
-* [Dev Home GitHub Extension](https://github.com/microsoft/devhomegithubextension)
-* [Dev Home Azure Extension](https://github.com/microsoft/devhomeazureextension)
-
-## Installing and running Dev Home
-
-> **Note**: Dev Home requires Windows 11 version 21H2 (build 22000) or Windows 10 version 22H2 (build 19045) or newer.
-
-If you are running Windows 11 23H2 (build 22621.2361) or later, you can install and run Dev Home just by finding it in the Start menu.
-
-Otherwise, you can install [Dev Home from the Microsoft Store](https://aka.ms/devhome).
-This allows you to always be on the latest version when we release new builds with automatic upgrades. Note that widgets may not work on older versions of Windows.
-
-This is our preferred method.
-
-### Other install methods
-
-#### Via GitHub
-
+You can install [Dev Home from the Microsoft Store](https://aka.ms/devhome).
 For users who are unable to install Dev Home from the Microsoft Store, released builds can be manually downloaded from this repository's [Releases page](https://github.com/microsoft/devhome/releases).
 
-#### Via Windows Package Manager CLI (aka winget)
+> The "new" Dev Home - included in this repo, is not yet available on the Microsoft Store.
+> You can download the more modern version of Dev Home from GitHub Releases.
 
-[winget](https://github.com/microsoft/winget-cli) users can download and install the latest Dev Home release by installing the `Microsoft.DevHome` package:
+You can also install Dev Home via [`winget`](https://github.com/microsoft/winget-cli) by installing the `Microsoft.DevHome` package:
 
 ```powershell
 winget install --id Microsoft.DevHome -e
 ```
-
----
-
-## Dev Home roadmap
-
-The plan for Dev Home can be found in our [roadmap](docs/roadmap.md).
 
 ---
 
@@ -67,32 +50,13 @@ The machine configuration tool provides a list of popular apps when selecting ap
 
 ---
 
-## Documentation
-
-Documentation for Dev Home can be found at https://aka.ms/devhomedocs.
-
----
-
 ## Contributing
 
 We are excited to work alongside you, our amazing community, to build and enhance Dev Home!
 
-***BEFORE you start work on a feature/fix,*** please read & follow our [Contributor's Guide](CONTRIBUTING.md) to help avoid any wasted or duplicate effort.
+***BEFORE you start work on a feature/fix,*** please read & follow our [contributing guidelines](CONTRIBUTING.md) to help avoid any wasted or duplicate effort.
 
-## Communicating with the team
-
-The easiest way to communicate with the team is via GitHub issues.
-
-Please file new issues, feature requests, and suggestions but **DO search for similar open/closed preexisting issues before creating a new issue.**
-
-If you would like to ask a question that you feel doesn't warrant an issue (yet), please reach out to us via Twitter:
-
-* [Kayla Cinnamon](https://github.com/cinnamon-msft), Senior Product Manager: [@cinnamon_msft](https://twitter.com/cinnamon_msft)
-* [Clint Rutkas](https://github.com/crutkas), Principal Product Manager: [@clintrutkas](https://twitter.com/clintrutkas) 
-* [Leeza Mathew](https://github.com/mathewleeza), Engineering Lead: [@leezamathew](https://twitter.com/leezamathew)
-
----
-
+<!--
 ## Code of conduct
 
 We welcome contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
@@ -100,13 +64,10 @@ We welcome contributions and suggestions. Most contributions require you to agre
 When you submit a pull request, a CLA bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+-->
 
 ## Trademarks
 
 This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft trademarks or logos is subject to and must follow [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general). Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship. Any use of third-party trademarks or logos is subject to those third-parties' policies.
 
-## Thanks to our contributors
-
-<a href="https://github.com/microsoft/devhome/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=microsoft/devhome" />
-</a>
+---
