@@ -1,0 +1,661 @@
+trigger:
+- main
+- staging
+- release
+
+parameters:
+- name: SignOutput
+  type: boolean
+  default: False
+- name: Platforms
+  type: object
+  default:
+  - x86
+  - x64
+  - arm64
+- name: Configurations
+  type: object
+  default:
+  - Debug
+  - Release
+- name: "holdTrigger"
+  displayName: CloudTest HoldTrigger setting
+  type: string
+  default: None
+  values:
+  - None
+  - Completion
+  - Execution
+  - Failure
+  - Timeout
+
+variables:
+ # MSIXVersion's second part should always be odd to account for stub app's version
+  MSIXVersion: '0.2001'
+  VersionOfSDK: '0.700'
+  solution: '**/DevHome.sln'
+  appxPackageDir: 'AppxPackages'
+  testOutputArtifactDir: 'TestResults'
+
+resources:
+  repositories:
+  - repository: templates_onebranch
+    type: git
+    name: OneBranch.Pipelines/GovernedTemplates
+    ref: refs/heads/main
+  - repository: m365Pipelines
+    type: git
+    name: 1ESPipelineTemplates/M365GPT
+    ref: refs/tags/release
+
+extends:
+  template: v1/M365.Official.PipelineTemplate.yml@m365Pipelines
+  parameters:
+    sdl:
+      binskim:
+        break: false
+        scanOutputDirectoryOnly: true
+      roslyn:
+        enabled: true
+      arrow:
+        serviceConnection: DevHome Build VM Generation
+      sourceRepositoriesToScan:
+        include:
+        - repository: git://Dart/DevHomeStub
+      baseline:
+        baselineFile: $(Build.SourcesDirectory)\guardian\SDL\.gdnbaselines
+    pool:
+      name: Azure-Pipelines-1ESPT-ExDShared
+      image: windows-2022
+      os: windows
+    customBuildTags:
+    - ES365AIMigrationTooling
+    stages:
+    - stage: Build_SDK
+      dependsOn: []
+      jobs:
+      - job: Build_SDK
+        steps:
+        - task: NuGetToolInstaller@1
+
+        - task: NuGetAuthenticate@1
+
+        - task: PowerShell@2
+          displayName: Build SDK
+          name: BuildSDKCommand
+          inputs:
+            filePath: 'Build.ps1'
+            arguments: -Configuration "Release" -VersionOfSDK $(VersionOfSDK) -BuildStep "sdk" -IsAzurePipelineBuild
+
+        - template: ./build/templates/publish-symbolrequestprod-api.yml@self
+          parameters:
+            includePublicSymbolServer: false
+            subscription: $(symbolsubscription)
+            symbolProject: 'DevHome'
+            indexSources: false
+            symbolsArtifactName: 'DevHomeSDK'
+            symbolsVersion: '$(BuildingBranch)$(Build.BuildNumber)'
+            searchPattern: |
+              **/bin/**/*.pdb
+              **/bin/**/*.exe
+              **/bin/**/*.dll
+
+        templateContext:
+          outputs:
+          - output: pipelineArtifact
+            displayName: 'Publish Artifacts'
+            artifactName: SdkNugetPackage
+            targetPath: extensionsdk\_build
+
+    - stage: Build_StubPackages
+      dependsOn: []
+      jobs:
+      - job: Build_StubPackages
+        steps:
+        - checkout: self
+          path: s
+
+        - checkout: git://Dart/DevHomeStub
+
+        - task: NuGetToolInstaller@1
+
+        - task: NuGetAuthenticate@1
+
+        - task: PowerShell@2
+          displayName: Build Stub Packages
+          inputs:
+            filePath: 'Build.ps1'
+            arguments: -Configuration "Release" -Version $(MSIXVersion) -BuildStep "stubpackages" -IsAzurePipelineBuild
+
+        templateContext:
+          outputs:
+          - output: pipelineArtifact
+            displayName: 'Publish MSIX Bundle Artifacts'
+            artifactName: MsixBundle_Stub
+            targetPath: DevHomeStub\DevHomeStubPackage\AppxPackages
+
+    - stage: Build_DevHome
+      dependsOn: []
+      jobs:
+      - ${{ each configuration in parameters.Configurations }}:
+        - ${{ each platform in parameters.Platforms }}:
+          - job: Build_${{ platform }}_${{ configuration }}
+            timeoutInMinutes: 120
+            steps:
+            - task: NuGetToolInstaller@1
+
+            - task: NuGetAuthenticate@1
+
+            - task: PowerShell@2
+              displayName: Replace Stubbed Files
+              inputs:
+                filePath: 'build/scripts/Unstub.ps1'
+
+            - task: MicrosoftTDBuild.tdbuild-task.tdbuild-task.TouchdownBuildTask@4
+              displayName: Send and Download Localization Files for Artifacts
+              condition: and(eq(variables['EnableLocalization'], 'true'), eq(variables['UpdateLocalization'], 'true'))
+              inputs:
+                teamId: 71220
+                TDBuildServiceConnection: $(TouchdownServiceConnection)
+                authType: SubjectNameIssuer
+                resourceFilePath: |
+                  **\en-US\*.resw
+                  **\en-US\PDP.xml
+                outputDirectoryRoot: LocOutput
+                localizationTarget: true
+                appendRelativeDir: true
+                pseudoSetting: Included
+
+            - task: MicrosoftTDBuild.tdbuild-task.tdbuild-task.TouchdownBuildTask@4
+              displayName: Download and Use Localization Files
+              condition: eq(variables['EnableLocalization'], 'true')
+              retryCountOnTaskFailure: 2
+              inputs:
+                teamId: 71220
+                TDBuildServiceConnection: $(TouchdownServiceConnection)
+                authType: SubjectNameIssuer
+                resourceFilePath: |
+                  **\en-US\*.resw
+                  **\en-US\PDP.xml
+                localizationTarget: false
+                appendRelativeDir: true
+                pseudoSetting: Included
+
+            - task: PowerShell@2
+              displayName: Move Loc files one level up
+              condition: eq(variables['EnableLocalization'], 'true')
+              inputs:
+                targetType: inline
+                script: >-
+                  $Files = Get-ChildItem . -R -Filter 'Resources.resw' | ? FullName -Like '*en-US\*\Resources.resw'
+
+                  $Files | % { Move-Item -Verbose $_.Directory $_.Directory.Parent.Parent -EA:Ignore }
+
+                  $Files = Get-ChildItem . -R -Filter 'PDP.xml' | ? FullName -Like '*en-US\*\PDP.xml'
+
+                  $Files | % { Move-Item -Verbose $_.Directory $_.Directory.Parent.Parent -EA:Ignore }
+                pwsh: true
+
+            - task: PowerShell@2
+              displayName: Archive Loc Output for Submission
+              condition: and(eq(variables['EnableLocalization'], 'true'), eq(variables['UpdateLocalization'], 'true'))
+              inputs:
+                targetType: inline
+                script: >-
+                  New-Item -Path 'locArchive' -ItemType Directory
+
+                  tar czf locArchive\LocOutput.tar.gz LocOutput
+                pwsh: true
+
+            - task: PowerShell@2
+              displayName: Build Dev Home
+              retryCountOnTaskFailure: 2
+              inputs:
+                filePath: 'Build.ps1'
+                arguments: -Platform "${{ platform }}" -Configuration "${{ configuration }}" -Version $(MSIXVersion) -BuildStep "fullMsix" -AzureBuildingBranch "$(BuildingBranch)" -IsAzurePipelineBuild
+
+            - task: PowerShell@2
+              displayName: Move BinLog to output directory
+              inputs:
+                targetType: inline
+                script: >-
+                  Move-Item -Path $(Build.SourcesDirectory)\DevHome.${{ platform }}.${{ configuration }}.binlog -Destination $(Build.SourcesDirectory)\src\bin -Force
+                pwsh: true
+
+            - template: ./build/templates/publish-symbolrequestprod-api.yml@self
+              parameters:
+                includePublicSymbolServer: true
+                symbolProject: 'DevHome'
+                subscription: $(SymbolSubscription)
+                indexSources: true
+                symbolsArtifactName: 'DevHome_${{ platform }}_${{ configuration }}'
+                symbolsVersion: '$(BuildingBranch)$(Build.BuildNumber)'
+                searchPattern: >-
+                  $(Build.SourcesDirectory)\**\bin\**\*.pdb
+
+                  $(Build.SourcesDirectory)\**\bin\**\*.exe
+
+                  $(Build.SourcesDirectory)\**\bin\**\*.dll
+
+                  $(Build.SourcesDirectory)\**\obj\**\*.pdb
+
+                  $(Build.SourcesDirectory)\**\obj\**\devhome.r2r.dll
+
+            - template: ./build/templates/EsrpSigning-Steps.yml@self
+              parameters:
+                displayName: Submit *.msix to ESRP for code signing
+                inputs:
+                  FolderPath: '$(appxPackageDir)\${{ configuration }}'
+                  Pattern: '*.msix'
+                  UseMinimatch: true
+                  signConfigType: inlineSignParams
+                  inlineOperation: >-
+                    [
+                      {
+                        "keycode": "CP-230012",
+                        "operationSetCode": "SigntoolvNextSign",
+                        "parameters": [
+                          {
+                            "parameterName": "OpusName",
+                            "parameterValue": "Microsoft"
+                          },
+                          {
+                            "parameterName": "OpusInfo",
+                            "parameterValue": "http://www.microsoft.com"
+                          },
+                          {
+                            "parameterName": "PageHash",
+                            "parameterValue": "/NPH"
+                          },
+                          {
+                            "parameterName": "FileDigest",
+                            "parameterValue": "/fd sha256"
+                          },
+                          {
+                            "parameterName": "TimeStamp",
+                            "parameterValue": "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                          }
+                        ],
+                        "toolName": "signtool.exe",
+                        "toolVersion": "6.2.9304.0"
+                      }
+                    ]
+
+            # Commented out until our implementation is fixed
+            # - task: AzureKeyVault@1
+            #   inputs:
+            #     azureSubscription: 'DevHomeAzureServiceConnection'
+            #     KeyVaultName: 'DevHomeKeyVault'
+            #     SecretsFilter: 'ApiScanConnectionString'
+            #     RunAsPreJob: false
+
+            # - task: APIScan@2
+            #   inputs:
+            #     softwareFolder: '$(Build.StagingDirectory)'
+            #     softwareName: 'Dev Home'
+            #     softwareVersionNum: '1.0'
+            #     softwareBuildNum: '$(Build.BuildId)'
+            #     symbolsFolder: 'SRV*http://symweb'
+            #   env:
+            #     AzureServicesAuthConnectionString: $(ApiScanConnectionString)
+
+            - task: CopyFiles@2
+              displayName: Copy Unit Test DLLs
+              inputs:
+                #SourceFolder: # string. Source Folder.
+                Contents: 'test/bin/**/*' # string. Required. Contents. Default: *
+                targetFolder: '$(Build.ArtifactStagingDirectory)\unittest'
+
+            - task: CopyFiles@2
+              displayName: Copy Tools Unit Test DLLs
+              inputs:
+                #SourceFolder: # string. Source Folder.
+                Contents: 'tools/*/*UnitTest/bin/**/*' # string. Required. Contents. Default: *
+                targetFolder: '$(Build.ArtifactStagingDirectory)\unittest'
+
+            - task: CopyFiles@2
+              displayName: Copy UI Test DLLs
+              inputs:
+                #SourceFolder: # string. Source Folder.
+                Contents: 'uitest/bin/**/*' # string. Required. Contents. Default: *
+                targetFolder: '$(Build.ArtifactStagingDirectory)\unittest'
+
+            - task: CopyFiles@2
+              displayName: Copy Tools UI Test DLLs
+              inputs:
+                #SourceFolder: # string. Source Folder.
+                Contents: 'tools/*/*UITest/bin/**/*' # string. Required. Contents. Default: *
+                targetFolder: '$(Build.ArtifactStagingDirectory)\unittest'
+
+            - task: CopyFiles@2
+              displayName: Copy TestMap and TestGroup xmls
+              inputs:
+                #SourceFolder: # string. Source Folder.
+                Contents: 'uitest/*.xml' # string. Required. Contents. Default: *
+                targetFolder: '$(Build.ArtifactStagingDirectory)\unittest'
+
+            - task: CopyFiles@2
+              displayName: Copy run settings
+              inputs:
+                #SourceFolder: # string. Source Folder.
+                Contents: 'uitest/Test.runsettings' # string. Required. Contents. Default: *
+                targetFolder: '$(Build.ArtifactStagingDirectory)\unittest'
+
+            - task: CopyFiles@2
+              displayName: Copy Setup and Cleanup scripts
+              inputs:
+                #SourceFolder: # string. Source Folder.
+                Contents: 'uitest/UITest*.ps1' # string. Required. Contents. Default: *
+                targetFolder: '$(Build.ArtifactStagingDirectory)\unittest'
+
+            templateContext:
+              outputs:
+              - output: pipelineArtifact
+                displayName: 'Publish Artifact: Binaries'
+                artifactName: Binaries_${{ platform }}_${{ configuration }}
+                targetPath: $(Build.SourcesDirectory)\src\bin
+                sbomPackageName: devhome.binaries
+                sbomPackageVersion: $(MSIXVersion)
+              - output: pipelineArtifact
+                displayName: 'Publish Artifact: LocOutput'
+                condition: and(eq(variables['EnableLocalization'], 'true'), eq(variables['UpdateLocalization'], 'true'))
+                artifactName: LocOutput_${{ platform }}_${{ configuration }}
+                targetPath: LocArchive
+                sbomPackageName: devhome.locoutput
+                sbomPackageVersion: $(MSIXVersion)
+              - output: pipelineArtifact
+                displayName: Publish MSIX Artifact
+                artifactName: msix_${{ platform }}_${{ configuration }}
+                targetPath: $(appxPackageDir)\${{ configuration }}
+                sbomPackageName: devhome.msixpackage
+                sbomPackageVersion: $(MSIXVersion)
+              - output: pipelineArtifact
+                displayName: Publish Test Artifacts
+                artifactName: DevHomeUITests_${{ platform }}_${{ configuration }}
+                targetPath: $(Build.ArtifactStagingDirectory)\unittest
+                sbomPackageName: devhome.msixpackage
+                sbomPackageVersion: $(MSIXVersion)
+
+    - stage: Test
+      dependsOn: [Build_DevHome]
+      condition: and(in(dependencies.Build_DevHome.result, 'Succeeded'), ${{ containsValue(parameters.Configurations, 'release') }})
+      jobs:
+      - job: DevHomeWin11x64Test
+        pool: server
+        displayName: 'Dev Home Windows 11 Tests'
+        condition: ${{ containsValue(parameters.Platforms, 'x64') }}
+        timeoutInMinutes: 120
+        steps:
+        - task: asg-cloudtest.asg-cloudtest-servertasks.1ED2E272-8122-4964-9A8B-E1112FC306AA.CloudTestServerBuildTask@1
+          displayName: 'CloudTest Agentless Task'
+          inputs:
+            connectedServiceName: 'DevHomeCloudTest'
+            cloudTestTenant: devhomecloudtest
+            testMapLocation: '[BuildRoot]\uitest\TestMapWin11x64.xml'
+            pipelineArtifactName: DevHomeUITests_x64_Release
+            pipelineArtifactBuildUrl: '$(System.TaskDefinitionsUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)'
+            buildDropArtifactName: ''
+            parserProperties: 'worker:VsTestVersion=V150;session:HoldTrigger=${{ parameters.holdTrigger }};VstsTestResultAttachmentUploadBehavior=Always;Provider:[MsixArtifacts]:PipelineArtifactBuildUrl=$(System.TaskDefinitionsUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId);'
+            notificationSubscribers: 'dream'
+            scheduleBuildRequesterAlias: 'dream'
+
+      - job: DevHomeWin10x64Test
+        pool: server
+        displayName: 'Dev Home Windows 10 Tests'
+        condition: ${{ containsValue(parameters.Platforms, 'x64') }}
+        timeoutInMinutes: 120
+        steps:
+        - task: asg-cloudtest.asg-cloudtest-servertasks.1ED2E272-8122-4964-9A8B-E1112FC306AA.CloudTestServerBuildTask@1
+          displayName: 'CloudTest Agentless Task'
+          inputs:
+            connectedServiceName: 'DevHomeCloudTest'
+            cloudTestTenant: devhomecloudtest
+            testMapLocation: '[BuildRoot]\uitest\TestMapWin10x64.xml'
+            pipelineArtifactName: DevHomeUITests_x64_Release
+            pipelineArtifactBuildUrl: '$(System.TaskDefinitionsUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)'
+            buildDropArtifactName: ''
+            parserProperties: 'worker:VsTestVersion=V150;session:HoldTrigger=${{ parameters.holdTrigger }};VstsTestResultAttachmentUploadBehavior=Always;Provider:[MsixArtifacts]:PipelineArtifactBuildUrl=$(System.TaskDefinitionsUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId);'
+            notificationSubscribers: 'dream'
+            scheduleBuildRequesterAlias: 'dream'
+
+    - stage: Build_MsixBundle
+      dependsOn: [Build_DevHome, Build_StubPackages]
+      condition: in(dependencies.Build_DevHome.result, 'Succeeded')
+      jobs:
+      - job: Build_MsixBundles
+        steps:
+        - ${{ each configuration in parameters.Configurations }}:
+          - ${{ each platform in parameters.Platforms }}:
+            - task: DownloadPipelineArtifact@2
+              inputs:
+                buildType: 'current'
+                artifactName: msix_${{ platform }}_${{ configuration }}
+                targetPath: $(appxPackageDir)\${{ configuration }}
+
+          - task: PowerShell@2
+            displayName: Create Stub Directory
+            condition: and(eq(variables['BuildingBranch'], 'release'), eq('${{ configuration }}', 'Release'))
+            inputs:
+              targetType: 'inline'
+              script: New-Item -Path $(appxPackageDir)\${{ configuration }}\AppxMetadata\Stub -ItemType Directory
+
+          - task: DownloadPipelineArtifact@2
+            condition: and(eq(variables['BuildingBranch'], 'release'), eq('${{ configuration }}', 'Release'))
+            inputs:
+              buildType: 'current'
+              artifactName: MsixBundle_Stub
+              targetPath: $(appxPackageDir)\Staging
+
+          - task: PowerShell@2
+            displayName: Unbundle Stub Packages
+            condition: and(eq(variables['BuildingBranch'], 'release'), eq('${{ configuration }}', 'Release'))
+            inputs:
+              filePath: 'build/scripts/UnbundleStubPackage.ps1'
+              arguments: -InputPath $(appxPackageDir)\Staging -OutputLocation $(appxPackageDir)\${{ configuration }}\AppxMetadata\Stub
+
+          - ${{ if and(eq(variables['BuildingBranch'], 'release'), eq('${{ configuration }}', 'Release')) }}:
+            - template: ./build/templates/EsrpSigning-Steps.yml@self
+              parameters:
+                displayName: Submit *.msix to ESRP for code signing
+                inputs:
+                  FolderPath: '$(appxPackageDir)\${{ configuration }}\AppxMetadata\Stub'
+                  Pattern: '*.msix'
+                  UseMinimatch: true
+                  signConfigType: inlineSignParams
+                  inlineOperation: |
+                    [
+                      {
+                        "keycode": "CP-230012",
+                        "operationSetCode": "SigntoolvNextSign",
+                        "parameters": [
+                          {
+                            "parameterName": "OpusName",
+                            "parameterValue": "Microsoft"
+                          },
+                          {
+                            "parameterName": "OpusInfo",
+                            "parameterValue": "http://www.microsoft.com"
+                          },
+                          {
+                            "parameterName": "PageHash",
+                            "parameterValue": "/NPH"
+                          },
+                          {
+                            "parameterName": "FileDigest",
+                            "parameterValue": "/fd sha256"
+                          },
+                          {
+                            "parameterName": "TimeStamp",
+                            "parameterValue": "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                          }
+                        ],
+                        "toolName": "signtool.exe",
+                        "toolVersion": "6.2.9304.0"
+                      }
+                    ]
+
+          - task: PowerShell@2
+            displayName: Build MsixBundle
+            inputs:
+              filePath: 'Build.ps1'
+              arguments: -Configuration "${{ configuration }}" -Version $(MSIXVersion) -BuildStep "msixbundle" -IsAzurePipelineBuild
+
+          - template: ./build/templates/EsrpSigning-Steps.yml@self
+            parameters:
+              displayName: Submit *.msixbundle to ESRP for code signing
+              inputs:
+                FolderPath: 'AppxBundles\${{ configuration }}'
+                Pattern: '*.msixbundle'
+                UseMinimatch: true
+                signConfigType: inlineSignParams
+                inlineOperation: |
+                  [
+                    {
+                      "keycode": "CP-230012",
+                      "operationSetCode": "SigntoolvNextSign",
+                      "parameters": [
+                        {
+                          "parameterName": "OpusName",
+                          "parameterValue": "Microsoft"
+                        },
+                        {
+                          "parameterName": "OpusInfo",
+                          "parameterValue": "http://www.microsoft.com"
+                        },
+                        {
+                          "parameterName": "PageHash",
+                          "parameterValue": "/NPH"
+                        },
+                        {
+                          "parameterName": "FileDigest",
+                          "parameterValue": "/fd sha256"
+                        },
+                        {
+                          "parameterName": "TimeStamp",
+                          "parameterValue": "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                        }
+                      ],
+                      "toolName": "signtool.exe",
+                      "toolVersion": "6.2.9304.0"
+                    }
+                  ]
+
+        templateContext:
+          outputs:
+          - output: pipelineArtifact
+            displayName: Publish MSIX Bundle Artifacts
+            condition: ${{ containsValue(parameters.Configurations, 'release') }}
+            artifactName: MsixBundle_Release
+            targetPath: AppxBundles\Release
+          - output: pipelineArtifact
+            displayName: Publish MSIX Bundle Artifacts
+            condition: ${{ containsValue(parameters.Configurations, 'debug') }}
+            artifactName: MsixBundle_Debug
+            targetPath: AppxBundles\Debug
+
+    - stage: Store_Publish
+      dependsOn: [Build_MsixBundle, Test]
+      condition: |
+        and
+        (
+          in(dependencies.Build_MsixBundle.result, 'Succeeded'),
+          eq(variables['EnableStorePublishing'], 'true')
+        )
+      jobs:
+      - job: Store_Publish
+        timeoutInMinutes: 360
+        steps:
+        - task: DownloadPipelineArtifact@2
+          inputs:
+            buildType: 'current'
+            artifactName: MsixBundle_Release
+            targetPath: StorePublish
+
+        - task: MicrosoftTDBuild.tdbuild-task.tdbuild-task.TouchdownBuildTask@4
+          displayName: Download and Use Localization Files
+          condition: eq(variables['EnableLocalization'], 'true')
+          retryCountOnTaskFailure: 2
+          inputs:
+            teamId: 71220
+            TDBuildServiceConnection: $(TouchdownServiceConnection)
+            authType: SubjectNameIssuer
+            resourceFilePath: |
+              **\en-US\PDP.xml
+            localizationTarget: false
+            appendRelativeDir: true
+            pseudoSetting: Included
+
+        - task: PowerShell@2
+          displayName: Move Loc files one level up
+          condition: eq(variables['EnableLocalization'], 'true')
+          inputs:
+            targetType: inline
+            script: >-
+              $Files = Get-ChildItem . -R -Filter 'PDP.xml' | ? FullName -Like '*en-US\*\PDP.xml'
+
+              $Files | % { Move-Item -Verbose $_.Directory $_.Directory.Parent.Parent -EA:Ignore }
+            pwsh: true
+
+        - task: MS-RDX-MRO.windows-store-publish-dev.package-task.store-package@3
+          displayName: 'Create Staging StoreBroker Package'
+          condition: eq(variables['BuildingBranch'], 'staging')
+          inputs:
+            serviceEndpoint: 'DevHomeCanary StoreBroker ServiceConnection'
+            sbConfigPath: '$(System.DefaultWorkingDirectory)\build\store\canary\SBConfig.json'
+            sourceFolder: 'StorePublish'
+            contents: '*.msixbundle'
+            pdpPath: '$(System.DefaultWorkingDirectory)\build\store\canary\PDPs'
+            pdpMediaPath: '$(System.DefaultWorkingDirectory)\build\store\canary\media'
+            outSBName: DevHomeStoreSubmissionPackage
+            pdpInclude: 'PDP.xml'
+
+        - task: MS-RDX-MRO.windows-store-publish-dev.publish-task.store-publish@3
+          displayName: 'Publish Staging StoreBroker Package'
+          condition: eq(variables['BuildingBranch'], 'staging')
+          inputs:
+            serviceEndpoint: 'DevHomeCanary StoreBroker ServiceConnection'
+            appId: 9MX22N5S7HRD
+            inputMethod: JsonAndZip
+            jsonPath: '$(System.DefaultWorkingDirectory)\SBOutDir\DevHomeStoreSubmissionPackage.json'
+            zipPath: '$(System.DefaultWorkingDirectory)\SBOutDir\DevHomeStoreSubmissionPackage.zip'
+            force: true
+            deletePackages: true
+            numberOfPackagesToKeep: 2
+            jsonZipUpdateMetadata: true
+            updateImages: true
+
+        - task: MS-RDX-MRO.windows-store-publish-dev.package-task.store-package@3
+          displayName: 'Create Release StoreBroker Package'
+          condition: eq(variables['BuildingBranch'], 'release')
+          inputs:
+            serviceEndpoint: 'DevHome StoreBroker ServiceConnection'
+            sbConfigPath: '$(System.DefaultWorkingDirectory)\build\store\preview\SBConfig.json'
+            sourceFolder: 'StorePublish'
+            contents: '*.msixbundle'
+            pdpPath: '$(System.DefaultWorkingDirectory)\build\store\preview\PDPs'
+            pdpMediaPath: '$(System.DefaultWorkingDirectory)\build\store\preview\media'
+            outSBName: DevHomeStoreSubmissionPackage
+            pdpInclude: 'PDP.xml'
+
+        - task: MS-RDX-MRO.windows-store-publish-dev.publish-task.store-publish@3
+          displayName: 'Publish Release StoreBroker Package'
+          condition: eq(variables['BuildingBranch'], 'release')
+          inputs:
+            serviceEndpoint: 'DevHome StoreBroker ServiceConnection'
+            appId: 9N8MHTPHNGVV
+            inputMethod: JsonAndZip
+            jsonPath: '$(System.DefaultWorkingDirectory)\SBOutDir\DevHomeStoreSubmissionPackage.json'
+            zipPath: '$(System.DefaultWorkingDirectory)\SBOutDir\DevHomeStoreSubmissionPackage.zip'
+            force: true
+            deletePackages: true
+            numberOfPackagesToKeep: 2
+            jsonZipUpdateMetadata: true
+            updateImages: true
+
+        templateContext:
+          outputs:
+          - output: pipelineArtifact
+            displayName: 'Publish StoreBroker Artifacts'
+            condition: or(eq(variables['BuildingBranch'], 'staging'), eq(variables['BuildingBranch'], 'release'))
+            artifactName: StoreBrokerPackage
+            targetPath: '$(System.DefaultWorkingDirectory)\SBOutDir'
