@@ -24,7 +24,7 @@
     <ProjectReference Include="$(SharedProject)" />
     <ProjectReference Include="$(DatabaseDirectory)\DevHome.Database\DevHome.Database.csproj" />
     <ProjectReference Include="$(ExtensionsDirectory)\GitExtension\FileExplorerGitIntegration\FileExplorerGitIntegration.csproj" />
-    <ProjectReference Include="..\..\Customization\DevHome.Customization\DevHome.Customization.csproj" />
+    <ProjectReference Include="$(ToolsDirectory)\Customization\DevHome.Customization\DevHome.Customization.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -18,8 +18,9 @@
 
   <ItemGroup>
     <ProjectReference Include="$(SharedProject)" />
-    <ProjectReference Include="..\..\SetupFlow\DevHome.SetupFlow.Common\DevHome.SetupFlow.Common.csproj" />
-    <ProjectReference Include="..\..\SetupFlow\DevHome.SetupFlow\DevHome.SetupFlow.csproj" />
+    <ProjectReference Include="$(SharedDirectory)\DevHome.Telemetry\DevHome.Telemetry.csproj" />
+    <ProjectReference Include="$(ToolsDirectory)\SetupFlow\DevHome.SetupFlow.Common\DevHome.SetupFlow.Common.csproj" />
+    <ProjectReference Include="$(ToolsDirectory)\SetupFlow\DevHome.SetupFlow\DevHome.SetupFlow.csproj" />
     <ProjectReference Include="..\DevHome.FileExplorerSourceControlIntegration\DevHome.FileExplorerSourceControlIntegration.csproj" />
   </ItemGroup>
 
