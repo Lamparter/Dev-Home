@@ -58,7 +58,7 @@ jobs:
 
     - name: Restore nuget packages
       run: |
-        cmd /c "$env:VSDevCmd" "&" msbuild -t:restore /m /p:Configuration=Release,Platform=${{ matrix.platform }},RestorePackagesConfig=true extensionsdk\\DevHomeSDK.sln
+        cmd /c "$env:VSDevCmd" "&" msbuild -t:restore /m /p:Configuration=Release,Platform=${{ matrix.platform }},RestorePackagesConfig=true src\\sdk\\DevHomeSDK.sln
         cmd /c "$env:VSDevCmd" "&" msbuild -t:restore /m /p:Configuration=Release,Platform=${{ matrix.platform }} DevHome.sln
         cmd /c ".\.nuget\nuget.exe restore"
 
