@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\common\DevHome.Common.csproj" />
+    <ProjectReference Include="$(SharedProject)" />
   </ItemGroup>
 
   <ItemGroup>

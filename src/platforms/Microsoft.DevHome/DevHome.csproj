@@ -81,24 +81,24 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\common\DevHome.Common.csproj" />
-    <ProjectReference Include="..\extensions\CoreWidgetProvider\CoreWidgetProvider.csproj" />
-    <ProjectReference Include="..\extensions\GitExtension\FileExplorerGitIntegration\FileExplorerGitIntegration.csproj" />
-    <ProjectReference Include="..\extensions\WSLExtension\WSLExtension.csproj" />
-    <ProjectReference Include="..\settings\DevHome.Settings\DevHome.Settings.csproj" />
-    <ProjectReference Include="..\tools\Customization\DevHome.FileExplorerSourceControlIntegration\DevHome.FileExplorerSourceControlIntegration.csproj" />
-    <ProjectReference Include="..\tools\Dashboard\DevHome.Dashboard\DevHome.Dashboard.csproj" />
-    <ProjectReference Include="..\tools\Experiments\src\DevHome.Experiments.csproj" />
-    <ProjectReference Include="..\tools\RepositoryManagement\DevHome.RepositoryManagement\DevHome.RepositoryManagement.csproj" />
-    <ProjectReference Include="..\tools\SetupFlow\DevHome.SetupFlow\DevHome.SetupFlow.csproj" />
-    <ProjectReference Include="..\tools\ExtensionLibrary\DevHome.ExtensionLibrary\DevHome.ExtensionLibrary.csproj" />
-    <ProjectReference Include="..\extensions\HyperVExtension\src\HyperVExtensionServer\HyperVExtensionServer.csproj" />
-    <ProjectReference Include="..\tools\Environments\DevHome.Environments\DevHome.Environments.csproj" />
-    <ProjectReference Include="..\tools\Customization\DevHome.Customization\DevHome.Customization.csproj" />
-    <ProjectReference Include="..\tools\Utilities\EnvVariablesUtility\DevHome.EnvironmentVariables.csproj" />
-    <ProjectReference Include="..\tools\Utilities\HostsUtility\DevHome.HostsFileEditor.csproj" />
-    <ProjectReference Include="..\tools\Utilities\RegPreviewUtility\DevHome.RegistryPreview.csproj" />
-    <ProjectReference Include="..\tools\Utilities\src\DevHome.Utilities.csproj" />
+    <ProjectReference Include="$(SharedProject)" />
+    <ProjectReference Include="$(ExtensionsDirectory)\CoreWidgetProvider\CoreWidgetProvider.csproj" />
+    <ProjectReference Include="$(ExtensionsDirectory)\GitExtension\FileExplorerGitIntegration\FileExplorerGitIntegration.csproj" />
+    <ProjectReference Include="$(ExtensionsDirectory)\WSLExtension\WSLExtension.csproj" />
+    <ProjectReference Include="$(AppDirectory)\DevHome.Settings\DevHome.Settings.csproj" />
+    <ProjectReference Include="$(ToolsDirectory)\Customization\DevHome.FileExplorerSourceControlIntegration\DevHome.FileExplorerSourceControlIntegration.csproj" />
+    <ProjectReference Include="$(ToolsDirectory)\Dashboard\DevHome.Dashboard\DevHome.Dashboard.csproj" />
+    <ProjectReference Include="$(ToolsDirectory)\Experiments\src\DevHome.Experiments.csproj" />
+    <ProjectReference Include="$(ToolsDirectory)\RepositoryManagement\DevHome.RepositoryManagement\DevHome.RepositoryManagement.csproj" />
+    <ProjectReference Include="$(ToolsDirectory)\SetupFlow\DevHome.SetupFlow\DevHome.SetupFlow.csproj" />
+    <ProjectReference Include="$(ToolsDirectory)\ExtensionLibrary\DevHome.ExtensionLibrary\DevHome.ExtensionLibrary.csproj" />
+    <ProjectReference Include="$(ExtensionsDirectory)\HyperVExtension\src\HyperVExtensionServer\HyperVExtensionServer.csproj" />
+    <ProjectReference Include="$(ToolsDirectory)\Environments\DevHome.Environments\DevHome.Environments.csproj" />
+    <ProjectReference Include="$(ToolsDirectory)\Customization\DevHome.Customization\DevHome.Customization.csproj" />
+    <ProjectReference Include="$(ToolsDirectory)\Utilities\EnvVariablesUtility\DevHome.EnvironmentVariables.csproj" />
+    <ProjectReference Include="$(ToolsDirectory)\Utilities\HostsUtility\DevHome.HostsFileEditor.csproj" />
+    <ProjectReference Include="$(ToolsDirectory)\Utilities\RegPreviewUtility\DevHome.RegistryPreview.csproj" />
+    <ProjectReference Include="$(ToolsDirectory)\Utilities\src\DevHome.Utilities.csproj" />
   </ItemGroup>
 
   <ItemGroup>

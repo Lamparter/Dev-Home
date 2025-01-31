@@ -10,6 +10,6 @@
     <PackageReference Include="System.Management.Automation" Version="7.4.3" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\telemetry\DevHome.Telemetry\DevHome.Telemetry.csproj" />
+    <ProjectReference Include="$(SharedDirectory)\DevHome.Telemetry\DevHome.Telemetry.csproj" />
   </ItemGroup>
 </Project>

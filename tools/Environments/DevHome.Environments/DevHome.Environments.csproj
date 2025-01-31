@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\common\DevHome.Common.csproj" />
-    <ProjectReference Include="..\..\..\settings\DevHome.Settings\DevHome.Settings.csproj" />
+    <ProjectReference Include="$(SharedProject)" />
+    <ProjectReference Include="$(AppDirectory)\DevHome.Settings\DevHome.Settings.csproj" />
   </ItemGroup>
 </Project>

@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DevHome.Services.Core\DevHome.Services.Core.csproj" />
+    <ProjectReference Include="$(ServicesDirectory)\DevHome.Services.Core\DevHome.Services.Core.csproj" />
   </ItemGroup>
   <Target Name="CopyWinmdToTargetDir" BeforeTargets="BeforeBuild">
     <Copy SourceFiles="$(PkgMicrosoft_WindowsPackageManager_Configuration_OutOfProc)\runtimes\win10-$(Platform)\native\Microsoft.Management.Configuration.dll" DestinationFolder="$(TargetDir)" />

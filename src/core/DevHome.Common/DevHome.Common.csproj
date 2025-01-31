@@ -59,7 +59,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\services\DevHome.Services.Core\DevHome.Services.Core.csproj" />
+    <ProjectReference Include="$(ServicesDirectory)\DevHome.Services.Core\DevHome.Services.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
