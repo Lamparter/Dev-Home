@@ -132,7 +132,7 @@
 
   <!-- Third party notice file -->
   <ItemGroup>
-    <Content Include="$(SolutionDir)NOTICE.txt">
+    <Content Include="$(RepositoryFilesDirectory)\NOTICE.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Assets\NOTICE.txt</Link>
     </Content>
