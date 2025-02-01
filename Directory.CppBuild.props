@@ -2,11 +2,11 @@
   <PropertyGroup>
     <CppPlatformTarget>$(Platform)</CppPlatformTarget>
     <CppPlatformTarget Condition="'$(Platform)' == 'Win32'">x86</CppPlatformTarget>
-    <CppBaseOutDir>$(SolutionDir)tools\bin\$(CppPlatformTarget)\$(Configuration)\</CppBaseOutDir>
+    <CppBaseOutDir>$(ToolsDirectory)\bin\$(CppPlatformTarget)\$(Configuration)\</CppBaseOutDir>
     <CppOutDir>$(CppBaseOutDir)$(MSBuildProjectName)\</CppOutDir>
   </PropertyGroup>
 
   <ImportGroup Label="Shared">
-    <Import Project="$(SolutionDir)build\cppversion\version.vcxitems" Label="Shared" />
+    <Import Project="$(BuildDirectory)\cppversion\version.vcxitems" Label="Shared" />
   </ImportGroup>
 </Project>

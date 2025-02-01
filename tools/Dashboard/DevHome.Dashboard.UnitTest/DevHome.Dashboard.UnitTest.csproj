@@ -17,7 +17,7 @@
     <PackageReference Include="MSTest.TestFramework" Version="3.5.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\DevHome.csproj" />
+    <ProjectReference Include="$(MainProject)" />
     <ProjectReference Include="..\DevHome.Dashboard\DevHome.Dashboard.csproj" />
   </ItemGroup>
 </Project>

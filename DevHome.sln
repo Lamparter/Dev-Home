@@ -12,22 +12,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		ToolingVersions.props = ToolingVersions.props
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome", "src\DevHome.csproj", "{60E0FD98-5396-436D-BAB7-187A853A5DC6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome", "src\platforms\Microsoft.DevHome\DevHome.csproj", "{60E0FD98-5396-436D-BAB7-187A853A5DC6}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0689521A-1686-46DB-81E1-3B84AA0EF1AC} = {0689521A-1686-46DB-81E1-3B84AA0EF1AC}
 		{8BE0016E-5BBD-459E-A382-B1CE56E7CA5D} = {8BE0016E-5BBD-459E-A382-B1CE56E7CA5D}
 		{D2303635-3DD9-4DCA-A38A-F5306D0BB8FE} = {D2303635-3DD9-4DCA-A38A-F5306D0BB8FE}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Common", "common\DevHome.Common.csproj", "{8BE0016E-5BBD-459E-A382-B1CE56E7CA5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Common", "src\core\DevHome.Common\DevHome.Common.csproj", "{8BE0016E-5BBD-459E-A382-B1CE56E7CA5D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Test", "test\DevHome.Test.csproj", "{3B409BF0-59D5-4AA3-8927-8E11476E6CEB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Test", "tests\Microsoft.DevHome.Tests\DevHome.Test.csproj", "{3B409BF0-59D5-4AA3-8927-8E11476E6CEB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.UITest", "uitest\DevHome.UITest.csproj", "{E9F49E1C-C15D-4B87-92CA-9003C1C31DB5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.UITest", "tests\Microsoft.DevHome.UITests\DevHome.UITest.csproj", "{E9F49E1C-C15D-4B87-92CA-9003C1C31DB5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleTool", "tools\SampleTool\src\SampleTool.csproj", "{CD512D91-FDA6-4908-89D5-4106F090A7BE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Telemetry", "telemetry\DevHome.Telemetry\DevHome.Telemetry.csproj", "{C45241F7-8B4A-44F2-A78B-AFB6288F55B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Telemetry", "src\core\DevHome.Telemetry\DevHome.Telemetry.csproj", "{C45241F7-8B4A-44F2-A78B-AFB6288F55B9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.SetupFlow", "tools\SetupFlow\DevHome.SetupFlow\DevHome.SetupFlow.csproj", "{0901B260-1B88-4B99-A9F8-477ED0A74FBD}"
 EndProject
@@ -47,7 +47,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Dashboard", "tools\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Dashboard.UnitTest", "tools\Dashboard\DevHome.Dashboard.UnitTest\DevHome.Dashboard.UnitTest.csproj", "{6254ADB1-B6FD-4D74-AF13-40C997919178}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Settings", "settings\DevHome.Settings\DevHome.Settings.csproj", "{72CE876A-7272-4460-92EB-845A45B743FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Settings", "src\platforms\DevHome.Settings\DevHome.Settings.csproj", "{72CE876A-7272-4460-92EB-845A45B743FB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.SetupFlow.ElevatedServer", "tools\SetupFlow\DevHome.SetupFlow.ElevatedServer\DevHome.SetupFlow.ElevatedServer.csproj", "{940FD524-1AC0-4BBA-BBBE-1E4F2E797508}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -63,7 +63,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.SetupFlow.ElevatedC
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CoreWidgetProvider", "CoreWidgetProvider", "{32C0052F-10AF-48C0-A7A3-B0A1793397FD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreWidgetProvider", "extensions\CoreWidgetProvider\CoreWidgetProvider.csproj", "{0D879E08-99AA-4019-9D04-DEA9F7C7BFC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreWidgetProvider", "src\extensions\CoreWidgetProvider\CoreWidgetProvider.csproj", "{0D879E08-99AA-4019-9D04-DEA9F7C7BFC1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.ExtensionLibrary", "tools\ExtensionLibrary\DevHome.ExtensionLibrary\DevHome.ExtensionLibrary.csproj", "{69F8B7DF-F52B-4B74-9A16-AB3241BB8912}"
 EndProject
@@ -79,35 +79,35 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Environments", "Environment
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Environments", "tools\Environments\DevHome.Environments\DevHome.Environments.csproj", "{CFD8A90D-8B6D-4ED6-BA35-FF894BEB46C0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HyperVExtensionServer", "extensions\HyperVExtension\src\HyperVExtensionServer\HyperVExtensionServer.csproj", "{0689521A-1686-46DB-81E1-3B84AA0EF1AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HyperVExtensionServer", "src\extensions\HyperVExtension\src\HyperVExtensionServer\HyperVExtensionServer.csproj", "{0689521A-1686-46DB-81E1-3B84AA0EF1AC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HyperVExtension.Common", "extensions\HyperVExtension\src\HyperVExtension.Common\HyperVExtension.Common.csproj", "{A716481F-C1AF-4243-84F9-7B9399055E51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HyperVExtension.Common", "src\extensions\HyperVExtension\src\HyperVExtension.Common\HyperVExtension.Common.csproj", "{A716481F-C1AF-4243-84F9-7B9399055E51}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HyperVExtension", "HyperVExtension", "{0ADDE603-FBC0-415C-A88B-8A3F5A086FB8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HyperVExtension", "extensions\HyperVExtension\src\HyperVExtension\HyperVExtension.csproj", "{75976510-22B7-4910-96F2-3E1519C3FF35}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HyperVExtension", "src\extensions\HyperVExtension\src\HyperVExtension\HyperVExtension.csproj", "{75976510-22B7-4910-96F2-3E1519C3FF35}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HyperVExtension.Telemetry", "extensions\HyperVExtension\src\Telemetry\HyperVExtension.Telemetry.csproj", "{D92BC45D-6D1B-4DE3-9303-4B3ED1971192}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HyperVExtension.Telemetry", "src\extensions\HyperVExtension\src\Telemetry\HyperVExtension.Telemetry.csproj", "{D92BC45D-6D1B-4DE3-9303-4B3ED1971192}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{81AACED5-CFB5-47A6-AFD6-4625AADCFFA3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{3E3791DF-070D-4ADE-96E8-93D6FBD53953}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevSetupAgent", "extensions\HyperVExtension\src\DevSetupAgent\DevSetupAgent.csproj", "{D8256951-EB23-45AA-8A0B-4573DF8E26F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevSetupAgent", "src\extensions\HyperVExtension\src\DevSetupAgent\DevSetupAgent.csproj", "{D8256951-EB23-45AA-8A0B-4573DF8E26F2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevSetupEngine", "extensions\HyperVExtension\src\DevSetupEngine\DevSetupEngine.csproj", "{2C7522A3-DCE2-4ED0-889A-AD10F241EDF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevSetupEngine", "src\extensions\HyperVExtension\src\DevSetupEngine\DevSetupEngine.csproj", "{2C7522A3-DCE2-4ED0-889A-AD10F241EDF4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DevSetupEngineIdl", "extensions\HyperVExtension\src\DevSetupEngineIdl\DevSetupEngineIdl.vcxproj", "{D6B0C16D-858A-4C1B-99CF-D6F4CF5BCD5F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DevSetupEngineIdl", "src\extensions\HyperVExtension\src\DevSetupEngineIdl\DevSetupEngineIdl.vcxproj", "{D6B0C16D-858A-4C1B-99CF-D6F4CF5BCD5F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevSetupEngineProjection", "extensions\HyperVExtension\src\DevSetupEngineProjection\DevSetupEngineProjection.csproj", "{AC872D0F-2F11-48C4-949C-2464EA1AC66F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevSetupEngineProjection", "src\extensions\HyperVExtension\src\DevSetupEngineProjection\DevSetupEngineProjection.csproj", "{AC872D0F-2F11-48C4-949C-2464EA1AC66F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HyperVExtension.UnitTest", "extensions\HyperVExtension\test\HyperVExtension\HyperVExtension.UnitTest.csproj", "{F9121D0A-BB3A-4010-A982-CD8B77F47AA2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HyperVExtension.UnitTest", "src\extensions\HyperVExtension\test\HyperVExtension\HyperVExtension.UnitTest.csproj", "{F9121D0A-BB3A-4010-A982-CD8B77F47AA2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevSetupEngine.Test", "extensions\HyperVExtension\test\DevSetupEngine.Test\DevSetupEngine.Test.csproj", "{F4095FD3-6A3F-490B-966D-E63059612EE6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevSetupEngine.Test", "src\extensions\HyperVExtension\test\DevSetupEngine.Test\DevSetupEngine.Test.csproj", "{F4095FD3-6A3F-490B-966D-E63059612EE6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevSetupAgent.Test", "extensions\HyperVExtension\test\DevSetupAgent.Test\DevSetupAgent.Test.csproj", "{0E05A442-BDC7-43D4-A000-F8C986826716}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevSetupAgent.Test", "src\extensions\HyperVExtension\test\DevSetupAgent.Test\DevSetupAgent.Test.csproj", "{0E05A442-BDC7-43D4-A000-F8C986826716}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HyperVExtension.HostGuestCommunication", "extensions\HyperVExtension\src\HyperVExtension.HostGuestCommunication\HyperVExtension.HostGuestCommunication.csproj", "{D759CD66-494C-4A00-8075-8B65A9891349}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HyperVExtension.HostGuestCommunication", "src\extensions\HyperVExtension\src\HyperVExtension.HostGuestCommunication\HyperVExtension.HostGuestCommunication.csproj", "{D759CD66-494C-4A00-8075-8B65A9891349}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Customization", "Customization", "{623998FD-B0A6-4980-95D5-A5072301CA10}"
 EndProject
@@ -129,32 +129,32 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.EnvironmentVariable
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{E0A15760-487A-4CCB-8093-DE6FF3C4BC23}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Services.WindowsPackageManager", "services\DevHome.Services.WindowsPackageManager\DevHome.Services.WindowsPackageManager.csproj", "{DA5C4FC8-18AF-4446-807F-A2FFFE4DCF6C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Services.WindowsPackageManager", "src\services\DevHome.Services.WindowsPackageManager\DevHome.Services.WindowsPackageManager.csproj", "{DA5C4FC8-18AF-4446-807F-A2FFFE4DCF6C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Services.Core", "services\DevHome.Services.Core\DevHome.Services.Core.csproj", "{8FB1EF90-B693-4A2A-A7F2-44ECA499D769}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Services.Core", "src\services\DevHome.Services.Core\DevHome.Services.Core.csproj", "{8FB1EF90-B693-4A2A-A7F2-44ECA499D769}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{E768781A-D1F7-4C03-B46D-E76354FAB587}"
 	ProjectSection(SolutionItems) = preProject
 		tools\scripts\CaptureDevHomeLogs.ps1 = tools\scripts\CaptureDevHomeLogs.ps1
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Services.DesiredStateConfiguration", "services\DevHome.Services.DesiredStateConfiguration\DevHome.Services.DesiredStateConfiguration.csproj", "{D7A1C2CE-36B1-43A8-9BA6-1EE2CF24479F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Services.DesiredStateConfiguration", "src\services\DevHome.Services.DesiredStateConfiguration\DevHome.Services.DesiredStateConfiguration.csproj", "{D7A1C2CE-36B1-43A8-9BA6-1EE2CF24479F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WSLExtension", "WSLExtension", "{73D1E84F-56CC-412B-BF2B-FA692BF6B396}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WSLExtension", "extensions\WSLExtension\WSLExtension.csproj", "{B6153EEA-EADE-4BAA-B47D-6B48205C6696}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WSLExtension", "src\extensions\WSLExtension\WSLExtension.csproj", "{B6153EEA-EADE-4BAA-B47D-6B48205C6696}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileExplorerGitIntegration", "extensions\GitExtension\FileExplorerGitIntegration\FileExplorerGitIntegration.csproj", "{5366F178-AD59-475C-B78D-2E6483313F9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileExplorerGitIntegration", "src\extensions\GitExtension\FileExplorerGitIntegration\FileExplorerGitIntegration.csproj", "{5366F178-AD59-475C-B78D-2E6483313F9E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitExtension", "GitExtension", "{01AB3100-A939-41DD-A67F-1F8C275A307D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileExplorerGitIntegration.UnitTest", "extensions\GitExtension\FileExplorerGitIntegration.UnitTest\FileExplorerGitIntegration.UnitTest.csproj", "{8C1C7BF8-B27B-4F4D-97E5-A16E02C7860E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileExplorerGitIntegration.UnitTest", "src\extensions\GitExtension\FileExplorerGitIntegration.UnitTest\FileExplorerGitIntegration.UnitTest.csproj", "{8C1C7BF8-B27B-4F4D-97E5-A16E02C7860E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.FileExplorerSourceControlIntegration", "tools\Customization\DevHome.FileExplorerSourceControlIntegration\DevHome.FileExplorerSourceControlIntegration.csproj", "{83D12033-364A-45F2-8FCA-9BD8E8322D91}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.FileExplorerSourceControlIntegrationUnitTest", "tools\Customization\DevHome.FileExplorerSourceControlIntegrationUnitTest\DevHome.FileExplorerSourceControlIntegrationUnitTest.csproj", "{A1FAE679-39D4-4278-A8E8-EA351F21A3E7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Database", "database\DevHome.Database\DevHome.Database.csproj", "{01CADE81-7333-4E24-A39B-95B7E58D4503}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Database", "src\database\DevHome.Database\DevHome.Database.csproj", "{01CADE81-7333-4E24-A39B-95B7E58D4503}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RepositoryManagement", "RepositoryManagement", "{567A82BE-7E9E-4D95-AF45-4EE8D57FE16D}"
 EndProject
@@ -1108,6 +1108,6 @@ Global
 		SolutionGuid = {030B5641-B206-46BB-BF71-36FF009088FA}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		build\cppversion\version.vcxitems*{60e0fd98-5396-436d-bab7-187a853a5dc6}*SharedItemsImports = 5
+		eng\cppversion\version.vcxitems*{60e0fd98-5396-436d-bab7-187a853a5dc6}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

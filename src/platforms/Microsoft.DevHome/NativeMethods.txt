@@ -1,0 +1,7 @@
+﻿GetPhysicallyInstalledSystemMemory
+GlobalMemoryStatusEx
+GetSystemInfo
+CoCreateInstance
+SetForegroundWindow
+IsIconic
+ShowWindow

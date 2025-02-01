@@ -17,6 +17,25 @@
     <WindowsSdkPackageVersion>10.0.22621.34</WindowsSdkPackageVersion>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <RootDirectory Condition=" '$(RootDirectory)' == '' ">$(MSBuildThisFileDirectory)</RootDirectory>
+		<SourceDirectory Condition=" '$(SourceDirectory)' == '' ">$(MSBuildThisFileDirectory)src</SourceDirectory>
+		<BuildDirectory Condition=" '$(BuildDirectory)' == '' ">$(RootDirectory)eng</BuildDirectory>
+		<RepositoryFilesDirectory Condition=" '$(RepositoryFilesDirectory)' == '' ">$(RootDirectory).github</RepositoryFilesDirectory>
+
+		<AppDirectory Condition=" '$(AppDirectory)' == '' ">$(SourceDirectory)\platforms</AppDirectory>
+		<SharedDirectory Condition=" '$(SharedDirectory)' == '' ">$(SourceDirectory)\core</SharedDirectory>
+    <DatabaseDirectory Condition=" '$(DatabaseDirectory)' == '' ">$(SourceDirectory)\database</DatabaseDirectory>
+    <ServicesDirectory Condition=" '$(ServicesDirectory)' == '' ">$(SourceDirectory)\services</ServicesDirectory>
+    <SDKDirectory Condition=" '$(SDKDirectory)' == '' ">$(SourceDirectory)\sdk</SDKDirectory>
+    <ExtensionsDirectory Condition=" '$(ExtensionsDirectory)' == '' ">$(SourceDirectory)\extensions</ExtensionsDirectory>
+
+    <ToolsDirectory Condition=" '$(ToolsDirectory)' == '' ">$(RootDirectory)tools</ToolsDirectory>
+
+    <MainProject Condition=" '$(MainProject)' == '' ">$(AppDirectory)\Microsoft.DevHome\DevHome.csproj</MainProject>
+    <SharedProject Condition=" '$(SharedProject)' == '' ">$(SharedDirectory)\DevHome.Common\DevHome.Common.csproj</SharedProject>
+  </PropertyGroup>
+
 <!--
   <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.csproj'">
     <RepositoryUrl>https://github.com/microsoft/PowerToys</RepositoryUrl>
@@ -48,9 +67,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <Compile Condition="$(MSBuildProjectName) != 'DevHomeStub'" Include="$(MSBuildThisFileDirectory)\codeAnalysis\GlobalSuppressions.cs" Link="GlobalSuppressions.cs" />
-    <Compile Condition="$(MSBuildProjectName) == 'DevHomeStub'" Include="$(MSBuildThisFileDirectory)\codeAnalysis\StubSuppressions.cs" Link="GlobalSuppressions.cs" />
-    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\codeAnalysis\StyleCop.json" Link="StyleCop.json" />
+    <Compile Condition="$(MSBuildProjectName) != 'DevHomeStub'" Include="$(MSBuildThisFileDirectory)\eng\codeAnalysis\GlobalSuppressions.cs" Link="GlobalSuppressions.cs" />
+    <Compile Condition="$(MSBuildProjectName) == 'DevHomeStub'" Include="$(MSBuildThisFileDirectory)\eng\codeAnalysis\StubSuppressions.cs" Link="GlobalSuppressions.cs" />
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\eng\codeAnalysis\StyleCop.json" Link="StyleCop.json" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug_FailFast'">
