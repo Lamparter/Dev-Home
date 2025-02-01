@@ -14,7 +14,7 @@
     <PlatformTarget>$(Platform)</PlatformTarget>
     <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
     <Configurations>Debug;Release;Debug_FailFast</Configurations>
-    <WindowsSdkPackageVersion>10.0.22621.34</WindowsSdkPackageVersion>
+    <WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -41,10 +41,10 @@
     <RepositoryUrl>https://github.com/microsoft/PowerToys</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
   </PropertyGroup>
--->
   <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.csproj'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+-->
 
   <PropertyGroup>
     <_PropertySheetDisplayName>DevHome.Root.Props</_PropertySheetDisplayName>
