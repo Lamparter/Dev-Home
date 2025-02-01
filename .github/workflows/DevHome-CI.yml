@@ -9,20 +9,13 @@ on:
     branches: [ "main", "feature*" ]
 
 jobs:
-  build-and-test:
+  build:
+    name: Build
     strategy:
       matrix:
         configuration: [Release, Debug]
         platform: [x64, x86, arm64]
-        os: [windows-latest]
-        dotnet-version: ['8.0.x']
-        exclude:
-        - configuration: Debug
-          platform: x64
-        - configuration: Release
-          platform: x86
-        - configuration: Debug
-          platform: arm64
+        os: [windows-latest] # This is kept because Uno build will be added later
     runs-on: ${{ matrix.os }}
     env:
       MSIX_VERSION: "0.1"
@@ -32,10 +25,10 @@ jobs:
       with:
         clean: true
 
-    - name: Setup .NET SDK ${{ matrix.dotnet-version }}
+    - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: ${{ matrix.dotnet-version }}
+        dotnet-version: 8.0.x
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.GPR_READ_TOKEN }}
 
