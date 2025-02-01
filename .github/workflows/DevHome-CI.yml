@@ -64,6 +64,59 @@ jobs:
     - name: Build_DevHome
       run: cmd /c "$env:VSDevCmd" "&" msbuild /p:Configuration=${{ matrix.configuration }},Platform=${{ matrix.platform }} DevHome.sln
 
+  test:
+    name: Test
+    strategy:
+      matrix:
+        configuration: [Release, Debug]
+        platform: [x64, x86]
+        os: [windows-latest] # This is kept because Uno build will be added later
+    runs-on: ${{ matrix.os }}
+    steps:
+    # This is all the same as the build job, except for the last 3 steps
+    # TODO: Merge all of these into a separate reusable workflow
+    - uses: actions/checkout@v4
+      with:
+        clean: true
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.GPR_READ_TOKEN }}
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v2
+      with:
+        vs-version: '17.5'
+
+    - name: Download nuget
+      run: |
+        mkdir ".\.nuget"
+        Invoke-WebRequest "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe" -OutFile ".\.nuget\nuget.exe"
+
+    - name: Find VsDevCmd.bat
+      run: |
+        $VSDevCmd = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere" -latest -find Common7\tools\VSDevCmd.bat
+        if (!$VSDevCmd) { exit 1 }
+        echo "Using VSDevCmd: ${VSDevCmd}"
+        Add-Content $env:GITHUB_ENV "VSDevCmd=$VSDevCmd"
+
+    - name: Restore nuget packages
+      run: |
+        cmd /c "$env:VSDevCmd" "&" msbuild -t:restore /m /p:Configuration=Release,Platform=${{ matrix.platform }} DevHome.sln
+        cmd /c ".\.nuget\nuget.exe restore"
+
+    - name: Build_DevSetupAgent
+      run: cmd /c "$env:VSDevCmd" "&" msbuild /p:Configuration=${{ matrix.configuration }},Platform=${{ matrix.platform }} src\\extensions\HyperVExtension\\DevSetupAgent.sln
+
+    - name: Compress_DevSetupAgent
+      shell: pwsh
+      run: Compress-Archive -Force -Path src\\extensions\HyperVExtension\src\DevSetupAgent\bin\${{ matrix.platform }}\${{ matrix.configuration }}\net8.0-windows10.0.22621.0\win-${{ matrix.platform }}\* -DestinationPath "src\extensions\HyperVExtension\src\DevSetupAgent\bin\${{ matrix.platform }}\${{ matrix.configuration }}\DevSetupAgent_${{ matrix.platform }}.zip"
+
+    - name: Build_DevHome
+      run: cmd /c "$env:VSDevCmd" "&" msbuild /p:Configuration=${{ matrix.configuration }},Platform=${{ matrix.platform }} DevHome.sln
     - name: Find vstest.console.exe
       if: ${{ matrix.platform != 'arm64' }}
       run: |
