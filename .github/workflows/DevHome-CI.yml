@@ -54,23 +54,12 @@ jobs:
         cmd /c "$env:VSDevCmd" "&" msbuild -t:restore /m /p:Configuration=Release,Platform=${{ matrix.platform }} DevHome.sln
         cmd /c ".\.nuget\nuget.exe restore"
 
-    - name: Build_DevSetupAgent_x86
-      if: ${{ matrix.platform != 'arm64' }}
-      run: cmd /c "$env:VSDevCmd" "&" msbuild /p:Configuration=${{ matrix.configuration }},Platform=x86 src\\extensions\HyperVExtension\\DevSetupAgent.sln
+    - name: Build_DevSetupAgent
+      run: cmd /c "$env:VSDevCmd" "&" msbuild /p:Configuration=${{ matrix.configuration }},Platform=${{ matrix.platform }} src\\extensions\HyperVExtension\\DevSetupAgent.sln
 
-    - name: Compress_DevSetupAgent_x86
-      if: ${{ matrix.platform != 'arm64' }}
+    - name: Compress_DevSetupAgent
       shell: pwsh
-      run: Compress-Archive -Force -Path src\\extensions\HyperVExtension\src\DevSetupAgent\bin\x86\${{ matrix.configuration }}\net8.0-windows10.0.22621.0\win-x86\* -DestinationPath "src\extensions\HyperVExtension\src\DevSetupAgent\bin\x86\${{ matrix.configuration }}\DevSetupAgent_x86.zip"
-
-    - name: Build_DevSetupAgent_arm64
-      if: ${{ matrix.platform == 'arm64' }}
-      run: cmd /c "$env:VSDevCmd" "&" msbuild /p:Configuration=${{ matrix.configuration }},Platform=arm64 extensions\HyperVExtension\\DevSetupAgent.sln
-
-    - name: Compress_DevSetupAgent_arm64
-      if: ${{ matrix.platform == 'arm64' }}
-      shell: pwsh
-      run: Compress-Archive -Force -Path src\extensions\HyperVExtension\src\DevSetupAgent\bin\arm64\${{ matrix.configuration }}\net8.0-windows10.0.22621.0\win-arm64\* -DestinationPath "src\extensions\HyperVExtension\src\DevSetupAgent\bin\arm64\${{ matrix.configuration }}\DevSetupAgent_arm64.zip"
+      run: Compress-Archive -Force -Path src\\extensions\HyperVExtension\src\DevSetupAgent\bin\${{ matrix.platform }}\${{ matrix.configuration }}\net8.0-windows10.0.22621.0\win-${{ matrix.platform }}\* -DestinationPath "src\extensions\HyperVExtension\src\DevSetupAgent\bin\${{ matrix.platform }}\${{ matrix.configuration }}\DevSetupAgent_${{ matrix.platform }}.zip"
 
     - name: Build_DevHome
       run: cmd /c "$env:VSDevCmd" "&" msbuild /p:Configuration=${{ matrix.configuration }},Platform=${{ matrix.platform }} DevHome.sln
