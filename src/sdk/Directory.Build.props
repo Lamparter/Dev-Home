@@ -21,6 +21,10 @@
     <ForceImportBeforeCppProps>$(MsbuildThisFileDirectory)\Cpp.Build.props</ForceImportBeforeCppProps>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackagesDirectory>$(MSBuildThisFileDirectory)\..\..\packages</PackagesDirectory>
+  </PropertyGroup>
+
   <ItemDefinitionGroup>
     <ResourceCompile>
       <PreprocessorDefinitions>VERSION_NUMBER=\"$(VersionNumber)\";VERSION_COMMAS=$(VersionNumber.Replace('.', ','));%(PreprocessorDefinitions)</PreprocessorDefinitions>
