@@ -41,10 +41,10 @@
     <RepositoryUrl>https://github.com/microsoft/PowerToys</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
   </PropertyGroup>
--->
   <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.csproj'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+-->
 
   <PropertyGroup>
     <_PropertySheetDisplayName>DevHome.Root.Props</_PropertySheetDisplayName>
