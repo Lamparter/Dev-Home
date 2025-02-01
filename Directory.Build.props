@@ -32,7 +32,7 @@
 
     <ToolsDirectory Condition=" '$(ToolsDirectory)' == '' ">$(RootDirectory)tools</ToolsDirectory>
 
-    <MainProject Condition=" '$(MainProject)' == '' ">$(AppDirectory)\Microsoft.DevHome\DevHome.csproj</MainProject>
+    <MainProject Condition=" '$(MainProject)' == '' ">$(AppDirectory)\Riverside.DevHome.App\Riverside.DevHome.App.csproj</MainProject>
     <SharedProject Condition=" '$(SharedProject)' == '' ">$(SharedDirectory)\DevHome.Common\DevHome.Common.csproj</SharedProject>
   </PropertyGroup>
 
